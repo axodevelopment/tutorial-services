@@ -58,6 +58,11 @@ func main() {
 
 	CONFIG, err = loadConfig()
 
+	if err != nil {
+		log(err.Error())
+		panic(err)
+	}
+
 	initSvc()
 
 	validateSvc(CONFIG)
@@ -71,6 +76,10 @@ func main() {
 	}
 
 	go func(svc *sb.Service) {
+
+		log("Starting service")
+		startSvc(svc)
+
 		log("Starting service core logic")
 		serviceLogic(svc)
 	}(svc)
@@ -81,6 +90,7 @@ func main() {
 		sb.Start(s)
 	}(svc)
 
+	<-svc.ExitAppChan
 }
 
 func initSvc() {
